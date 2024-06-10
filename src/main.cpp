@@ -17,26 +17,11 @@ int main(int argc, char** argv) {
         return -1;
     }
 
-    cv::Mat frame;
-    while (cap.read(frame)) {
-        // Melhoramento de imagem
-        cv::Mat enhancedFrame = enhanceImage(frame);
+    // Obter e exibir informações do vídeo
+    VideoInfo info = getVideoInfo(cap);
+    displayVideoInfo(info);
 
-        // Segmentação de imagem
-        cv::Mat segmentedFrame = segmentImage(frame);
-
-        // Deteção de resistências
-        std::vector<cv::Rect> resistors = detectResistors(segmentedFrame);
-
-        // Desenhar bounding boxes ao redor das resistências
-        for (const auto& rect : resistors) {
-            cv::rectangle(frame, rect, cv::Scalar(0, 255, 0), 2);
-        }
-
-        // Exibir o frame processado
-        cv::imshow("Video", frame);
-        if (cv::waitKey(30) >= 0) break;
-    }
+    processVideo(cap);
 
     return 0;
 }

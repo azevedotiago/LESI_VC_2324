@@ -33,5 +33,14 @@ cv::Mat segmentImage(const cv::Mat& frame) {
     // Cria a máscara para segmentação
     cv::inRange(hsv, lowerBound, upperBound, mask);
 
+    // Aplicar operações morfológicas para remover ruído
+    cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(5, 5));
+    cv::morphologyEx(mask, mask, cv::MORPH_CLOSE, kernel);  // Remove pequenas regiões internas
+    cv::morphologyEx(mask, mask, cv::MORPH_OPEN, kernel);   // Remove pequenas regiões externas
+
+    // Aplicar operações adicionais se necessário
+    cv::dilate(mask, mask, kernel, cv::Point(-1, -1), 2);
+    cv::erode(mask, mask, kernel, cv::Point(-1, -1), 2);
+
     return mask;
 }
