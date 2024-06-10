@@ -39,7 +39,7 @@ std::vector<cv::Rect> detectResistors(const cv::Mat& frame) {
     // Cria bounding boxes ao redor dos contornos detectados
     for (const auto& contour : contours) {
         // Filtra contornos pequenos que podem ser ruído
-        if (cv::contourArea(contour) > 100) {  // Ajuste este valor conforme necessário
+        if (cv::contourArea(contour) > 100) {
             cv::Rect boundingBox = cv::boundingRect(contour);
             resistors.push_back(boundingBox);
         }
