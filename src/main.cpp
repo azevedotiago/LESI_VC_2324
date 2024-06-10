@@ -1,7 +1,3 @@
-//
-// Created by Tiago Azevedo on 09/06/2024.
-//
-
 #include <iostream>
 #include <opencv2/opencv.hpp>
 #include "video_processor.h"

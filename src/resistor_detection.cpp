@@ -1,7 +1,3 @@
-//
-// Created by Tiago Azevedo on 09/06/2024.
-//
-
 #include "resistor_detection.h"
 #include <opencv2/opencv.hpp>
 #include <vector>
@@ -36,10 +32,10 @@ std::vector<cv::Rect> detectResistors(const cv::Mat& frame) {
     // Encontra contornos na imagem segmentada
     cv::findContours(frame, contours, hierarchy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
 
-    // Cria bounding boxes ao redor dos contornos detectados
+    // Cria bounding boxes ao redor dos contornos detetados
     for (const auto& contour : contours) {
         // Filtra contornos pequenos que podem ser ruído
-        if (cv::contourArea(contour) > 100) {
+        if (cv::contourArea(contour) > 500) {
             cv::Rect boundingBox = cv::boundingRect(contour);
             resistors.push_back(boundingBox);
         }
@@ -61,17 +57,12 @@ int identifyResistorValue(const cv::Mat& resistorROI) {
         }
     }
 
-    // Ajuste a condição para validar resistências de 4 ou 5 faixas
-    if (colorBands.size() != 4 && colorBands.size() != 5) return -1;
+    // Apenas aceita resistências de 4 faixas
+    if (colorBands.size() != 4) return -1;
 
     int value = 0;
-    if (colorBands.size() == 4) {
-        value += colorBands[0] * 10 + colorBands[1];
-        value *= std::pow(10, colorBands[2]);
-    } else if (colorBands.size() == 5) {
-        value += colorBands[0] * 100 + colorBands[1] * 10 + colorBands[2];
-        value *= std::pow(10, colorBands[3]);
-    }
+    value += colorBands[0] * 10 + colorBands[1];
+    value *= std::pow(10, colorBands[2]);
 
     return value;
 }
