@@ -61,22 +61,31 @@ int identifyResistorValue(const cv::Mat& resistorROI) {
         }
     }
 
-    if (colorBands.size() < 4) return -1;  // Menos de 4 faixas não pode ser uma resistência válida
+    // Ajuste a condição para validar resistências de 4 ou 5 faixas
+    if (colorBands.size() != 4 && colorBands.size() != 5) return -1;
 
     int value = 0;
-    value += colorBands[0] * 10 + colorBands[1];
-    value *= std::pow(10, colorBands[2]);
+    if (colorBands.size() == 4) {
+        value += colorBands[0] * 10 + colorBands[1];
+        value *= std::pow(10, colorBands[2]);
+    } else if (colorBands.size() == 5) {
+        value += colorBands[0] * 100 + colorBands[1] * 10 + colorBands[2];
+        value *= std::pow(10, colorBands[3]);
+    }
 
     return value;
 }
 
-std::vector<int> classifyResistors(const std::vector<cv::Rect>& resistors, const cv::Mat& frame) {
+std::vector<int> classifyResistors(const std::vector<cv::Rect>& resistors, const cv::Mat& frame, std::vector<cv::Rect>& validResistors) {
     std::vector<int> values;
     for (const auto& rect : resistors) {
         cv::Mat resistorROI = frame(rect);
 
         int value = identifyResistorValue(resistorROI);
-        values.push_back(value);
+        if (value != -1) {
+            validResistors.push_back(rect);
+            values.push_back(value);
+        }
     }
 
     return values;

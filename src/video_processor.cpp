@@ -30,6 +30,15 @@ void processVideo(cv::VideoCapture& cap) {
     // Obter as informações do vídeo
     VideoInfo info = getVideoInfo(cap);
 
+    // Configurar o VideoWriter
+    std::string outputPath = "../data/samples/output_video.mp4";
+    cv::VideoWriter writer(outputPath, cv::VideoWriter::fourcc('a', 'v', 'c', '1'), info.frameRate, cv::Size(info.width, info.height));
+
+    if (!writer.isOpened()) {
+        std::cerr << "Erro ao abrir o arquivo de saída de vídeo." << std::endl;
+        return;
+    }
+
     // Variável para contar o número de frames lidos
     int framesRead = 0;
 
@@ -52,17 +61,18 @@ void processVideo(cv::VideoCapture& cap) {
         // Deteção de resistências
         std::vector<cv::Rect> resistors = detectResistors(segmentedFrame);
 
-        // Classificação de resistências
-        std::vector<int> values = classifyResistors(resistors, frame);
+        // Classificação de resistências válidas
+        std::vector<cv::Rect> validResistors;
+        std::vector<int> values = classifyResistors(resistors, frame, validResistors);
 
         // Desenhar bounding boxes, centróides e valores
-        for (size_t i = 0; i < resistors.size(); ++i) {
-            cv::rectangle(frame, resistors[i], cv::Scalar(0, 255, 0), 2);
+        for (size_t i = 0; i < validResistors.size(); ++i) {
+            cv::rectangle(frame, validResistors[i], cv::Scalar(0, 255, 0), 2);
 
-            cv::Point2f centroid = calculateCentroid(resistors[i]);
+            cv::Point2f centroid = calculateCentroid(validResistors[i]);
             cv::circle(frame, centroid, 5, cv::Scalar(255, 0, 0), -1);
 
-            std::string valueText = std::to_string(values[i]) + " Ohm";
+            std::string valueText = std::to_string(values[i]) + " ohms";
             cv::putText(frame, valueText, centroid, cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(255, 255, 255), 2);
         }
 
@@ -73,6 +83,9 @@ void processVideo(cv::VideoCapture& cap) {
 
         // Altera a escala para 0.7 para negrito e a cor para azul (BGR: 255, 0, 0)
         cv::putText(frame, infoText, textOrg, cv::FONT_HERSHEY_SIMPLEX, 0.7, cv::Scalar(255, 0, 0), 2);
+
+        // Escrever o frame processado no arquivo de vídeo
+        writer.write(frame);
 
         // Exibir o frame processado
         cv::imshow("Video", frame);
