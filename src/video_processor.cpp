@@ -78,7 +78,9 @@ void processVideo(cv::VideoCapture& cap) {
                 cv::circle(frame, centroid, 5, cv::Scalar(255, 0, 0), -1);
 
                 std::string valueText = std::to_string(it->value) + " Ohm";
-                cv::putText(frame, valueText, centroid, cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(255, 255, 255), 2);
+                // cv::putText(frame, valueText, centroid, cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(255, 255, 255), 2);
+                cv::Point text_position(it->boundingBox.x, it->boundingBox.y + it->boundingBox.height + 20); // 20 pixels abaixo da caixa
+                cv::putText(frame, valueText, text_position, cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 0, 0), 2);
                 ++it;
             } else {
                 it = trackers.erase(it); // Remove o Tracker se o objeto saiu do frame
