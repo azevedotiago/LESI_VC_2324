@@ -11,5 +11,6 @@
 std::vector<cv::Rect> detectResistors(const cv::Mat& frame);
 std::vector<int> classifyResistors(const std::vector<cv::Rect>& resistors, const cv::Mat& frame);
 cv::Point2f calculateCentroid(const cv::Rect& boundingBox);
+int identifyResistorValue(const cv::Mat& resistorROI);
 
 #endif // RESISTOR_DETECTION_H

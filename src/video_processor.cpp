@@ -21,7 +21,7 @@ VideoInfo getVideoInfo(cv::VideoCapture& cap) {
 
 void displayVideoInfo(const VideoInfo& info) {
     // Exibir as informações do vídeo
-    std::cout << "Frames: " << info.totalFrames << std::endl;
+    std::cout << "Total Frames: " << info.totalFrames << std::endl;
     std::cout << "Frame rate: " << info.frameRate << " FPS" << std::endl;
     std::cout << "Resolucao: " << info.width << "x" << info.height << " pixels" << std::endl;
 }
@@ -62,7 +62,7 @@ void processVideo(cv::VideoCapture& cap) {
             cv::Point2f centroid = calculateCentroid(resistors[i]);
             cv::circle(frame, centroid, 5, cv::Scalar(255, 0, 0), -1);
 
-            std::string valueText = std::to_string(values[i]) + " ohms";
+            std::string valueText = std::to_string(values[i]) + " Ohm";
             cv::putText(frame, valueText, centroid, cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(255, 255, 255), 2);
         }
 
@@ -71,7 +71,7 @@ void processVideo(cv::VideoCapture& cap) {
         cv::Size textSize = cv::getTextSize(infoText, cv::FONT_HERSHEY_SIMPLEX, 0.7, 1, &baseline);
         cv::Point textOrg((frame.cols - textSize.width) / 2, frame.rows - 10);
 
-        // Altera a escala para 1.0 para negrito e a cor para azul (BGR: 255, 0, 0)
+        // Altera a escala para 0.7 para negrito e a cor para azul (BGR: 255, 0, 0)
         cv::putText(frame, infoText, textOrg, cv::FONT_HERSHEY_SIMPLEX, 0.7, cv::Scalar(255, 0, 0), 2);
 
         // Exibir o frame processado
